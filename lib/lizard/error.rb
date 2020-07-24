@@ -9,7 +9,13 @@ module Lizard
   class ResizeFailed < Error
   end
 
+  class CompressFailed < Error
+  end
+
   class CropFailed < Error
+  end
+
+  class CropWithOffsetFailed < Error
   end
 
   class InvalidResizeMode < Error

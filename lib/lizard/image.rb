@@ -92,6 +92,20 @@ module Lizard
       end
     end
 
+    def compress(quality, type = "jpeg")
+      unless TYPES.include?(type)
+        raise InvalidFileType, "#{type} is not valid. Choose from #{TYPES.join(', ')}"
+      end
+
+      command = ['convert', '-', '-quality', "#{quality.to_i}", "#{type}:-"]
+      stdout, stderr, exit_code = Lizard.run_command(command, @data)
+      if exit_code == 0
+        Image.new(stdout)
+      else
+        raise CompressFailed, "Image could not be compressed (#{stderr})"
+      end
+    end
+
     def crop(width, height, type = "jpeg")
       unless TYPES.include?(type)
         raise InvalidFileType, "#{type} is not valid. Choose from #{TYPES.join(', ')}"
@@ -116,7 +130,7 @@ module Lizard
       if exit_code == 0
         Image.new(stdout)
       else
-        raise CropFailed, "Image could not be cropped with offset (#{stderr})"
+        raise CropWithOffsetFailed, "Image could not be cropped with offset (#{stderr})"
       end
     end
 
