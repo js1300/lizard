@@ -106,6 +106,20 @@ module Lizard
       end
     end
 
+    def cropWithOffset(x, y, width, height, type = "jpeg")
+      unless TYPES.include?(type)
+        raise InvalidFileType, "#{type} is not valid. Choose from #{TYPES.join(', ')}"
+      end
+
+      command = ['convert', '-', '-crop', "#{width.to_i}x#{height.to_i}+#{x.to_i}+#{y.to_i}", "#{type}:-"]
+      stdout, stderr, exit_code = Lizard.run_command(command, @data)
+      if exit_code == 0
+        Image.new(stdout)
+      else
+        raise CropFailed, "Image could not be cropped with offset (#{stderr})"
+      end
+    end
+
     def histogram
       @histogram ||= Histogram.new(@data)
     end
